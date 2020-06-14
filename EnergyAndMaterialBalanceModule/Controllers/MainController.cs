@@ -19,15 +19,31 @@ namespace EnergyAndMaterialBalanceModule.Controllers
         private readonly IResourcesRepository _resourceRepository;
         private readonly IBGroupsRepository _bgroupsRepository;
         private readonly IPointsRepository _pointsRepository;
+        private readonly ISourcesRepository _sourcesRepository;
+        private readonly IPeriodsRepository _periodsRepository;
+        private readonly ISeicVMappingHistorianRepository _seicVMappingHistorianRepository;
+        private readonly ISeicVMappingItehRepository _seicVMappingItehRepository;
+        private readonly ISeicVMappingManualRepository _seicVMappingManualRepository;
+
 
         private ResultDto _result = new ResultDto();
 
-        public MainController(ILogger<MainController> logger, IResourcesRepository resourceRepository, IBGroupsRepository bgroupsRepository, IPointsRepository pointsRepository)
+        public MainController(ILogger<MainController> logger, IResourcesRepository resourceRepository,
+            IBGroupsRepository bgroupsRepository, IPointsRepository pointsRepository,
+            ISourcesRepository sourcesRepository, IPeriodsRepository periodsRepository,
+            ISeicVMappingHistorianRepository seicVMappingHistorianRepository,
+            ISeicVMappingItehRepository seicVMappingItehRepository,
+            ISeicVMappingManualRepository seicVMappingManualRepository)
         {
             _logger = logger;
             _resourceRepository = resourceRepository;
             _bgroupsRepository = bgroupsRepository;
             _pointsRepository = pointsRepository;
+            _sourcesRepository = sourcesRepository;
+            _periodsRepository = periodsRepository;
+            _seicVMappingHistorianRepository = seicVMappingHistorianRepository;
+            _seicVMappingItehRepository = seicVMappingItehRepository;
+            _seicVMappingManualRepository = seicVMappingManualRepository;
         }
 
         [Route("")]
@@ -62,6 +78,11 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             var selectedBGroup = await _bgroupsRepository.GetById(bgroupId);
             _result.SelectedBGroup = selectedBGroup;
             _result.Points = await _pointsRepository.GetAlPonts(selectedBGroup.BgroupId);
+            _result.Sources = _sourcesRepository.GetAll().ToList();
+            _result.Periods = _periodsRepository.GetAll().ToList();
+            _result.SeicVMappingHistorian = _seicVMappingHistorianRepository.GetAll().ToList();
+            _result.SeicVMappingIteh = _seicVMappingItehRepository.GetAll().ToList();
+            _result.SeicVMappingManual = _seicVMappingManualRepository.GetAll().ToList();
 
             return new JsonResult(_result);
         }

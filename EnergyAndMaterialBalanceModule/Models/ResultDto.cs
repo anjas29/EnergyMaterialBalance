@@ -18,6 +18,10 @@ namespace EnergyAndMaterialBalanceModule.Models
         public Points SelectedPoint { get; set; }
         public IEnumerable<Sources> Sources { get; set; }
         public IEnumerable<Periods> Periods { get; set; }
+        public IEnumerable<SeicVMappingHistorian> SeicVMappingHistorian { get; set; }
+        public IEnumerable<SeicVMappingIteh> SeicVMappingIteh { get; set; }
+        public IEnumerable<SeicVMappingManual> SeicVMappingManual { get; set; }
+
 
     }
 }

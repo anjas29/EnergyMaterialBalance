@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace EnergyAndMaterialBalanceModule.Data.Repositories
 {
-    interface ISourcesRepository : IBaseRepository<Sources>
+    public interface ISourcesRepository : IBaseRepository<Sources>
     {
+
     }
 }
