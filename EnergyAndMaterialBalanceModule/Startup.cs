@@ -42,10 +42,16 @@ namespace EnergyAndMaterialBalanceModule
             string connection = Configuration.GetConnectionString("SEICBalanceConnection");
             services.AddDbContext<SEICBalanceContext>(options =>
               options.UseSqlServer(connection));
+
             services.AddControllersWithViews();
             services.AddScoped<IResourcesRepository, ResourcesRepository>();
             services.AddScoped<IBGroupsRepository, BGroupsRepository>();
             services.AddScoped<IPointsRepository, PointsRepository>();
+            services.AddScoped<ISourcesRepository, SourcesRepository>();
+            services.AddScoped<IPeriodsRepository, PeriodsRepository>();
+            services.AddScoped<ISeicVMappingHistorianRepository, SeicVMappingHistorianRepository>();
+            services.AddScoped<ISeicVMappingItehRepository, SeicVMappingItehRepository>();
+            services.AddScoped<ISeicVMappingManualRepository, SeicVMappingManualRepository>();
 
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(60);   
