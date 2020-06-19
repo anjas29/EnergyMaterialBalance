@@ -139,6 +139,17 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             return new JsonResult(_result);
         }
 
+        [HttpPost]
+        [Route("createPoint")]
+        public async Task<IActionResult> CreatePoint([FromBody] Points model)
+        {
+            await _pointsRepository.Create(model);
+            _result.SelectedPoint = await _pointsRepository.GetById(model.PointId);
+            _result.Points = await _pointsRepository.GetAllPoints(model.BgroupId);
+
+            return new JsonResult(_result);
+        }
+
         [Route("getPoint/{pointId}")]
         public async Task<IActionResult> GetPoint(int pointId)
         {

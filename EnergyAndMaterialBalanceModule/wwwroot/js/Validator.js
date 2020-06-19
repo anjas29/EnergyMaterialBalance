@@ -1,4 +1,5 @@
-﻿$.validator.setDefaults({
+﻿
+$.validator.setDefaults({
     errorElement: 'span',
     errorClass: 'invalid-feedback',
     highlight: function (element, errorClass) {
@@ -10,8 +11,13 @@
     errorPlacement: function (error, element) {
         if (element.attr("name") == "createBGroupIdParent") {
             error.insertAfter("#level");
-        } else {
+        }
+        else if (element.attr("name") == "createPointTag") {
+            error.insertAfter("#tagCreate");
+        }
+        else {
             error.insertAfter(element);
         }
     }
+
 });
