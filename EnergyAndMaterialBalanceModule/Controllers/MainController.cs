@@ -150,6 +150,28 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             return new JsonResult(_result);
         }
 
+        [HttpPost]
+        [Route("updatePoint")]
+        public async Task<IActionResult> UpdatePoint([FromBody] Points model)
+        {
+
+            Points point = await _pointsRepository.GetById(model.PointId);
+            point.PointName = model.PointName;
+            point.ValidMistake = model.ValidMistake;
+            point.SourceId = model.SourceId;
+            point.PeriodId = model.PeriodId;
+            point.Direction = model.Direction;
+            point.Tagname = model.Tagname;
+
+            await _pointsRepository.Update(point);
+
+            _result.SelectedPoint = await _pointsRepository.GetById(point.PointId);
+            _result.Points = await _pointsRepository.GetAllPoints(point.BgroupId);
+
+            return new JsonResult(_result);
+        }
+
+
         [Route("getPoint/{pointId}")]
         public async Task<IActionResult> GetPoint(int pointId)
         {

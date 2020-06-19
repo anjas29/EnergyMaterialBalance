@@ -15,6 +15,9 @@ $.validator.setDefaults({
         else if (element.attr("name") == "createPointTag") {
             error.insertAfter("#tagCreate");
         }
+        else if (element.attr("name") == "updatePointTag") {
+            error.insertAfter("#tagUpdate");
+        }
         else {
             error.insertAfter(element);
         }
