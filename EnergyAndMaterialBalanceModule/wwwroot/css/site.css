@@ -29,9 +29,24 @@ for details on configuring this project to bundle and minify static web assets. 
     padding-right: .25rem !important;
 }
 
-.alert{
-    display:none;
+.alert {
+    display: none;
 }
+
+.form-select-button {
+    background-color: rgba(108, 117, 125,.1) !important;
+    border-radius: 0;
+    border-color: rgba(108, 117, 125,.1) !important;
+}
+
+#createPointTag[readonly] {
+    background-color: inherit;
+}
+
+#updatePointTag[readonly] {
+    background-color: inherit;
+}
+
 /* Tree view styles
 -------------------------------------------------- */
 .gj-picker-md, ul.gj-list-md li {
@@ -61,7 +76,7 @@ table {
     margin: 0;
 }
 
-#tableView .highlight td {
+table .highlight td {
     background-color: #009530;
     font-weight: 400;
     color: #f6fafb;
@@ -97,6 +112,10 @@ thead, tbody tr {
     width: 100%;
     word-wrap: break-word;
     table-layout: fixed;
+}
+
+.modalTable tbody {
+    height: 200px !important;
 }
 /* Modal window styles
 -------------------------------------------------- */
@@ -361,7 +380,9 @@ body {
 }
 
 select {
-    font-weight: 300 !important;
+    font-weight: 400 !important;
+    color: #6c757d !important;
+    opacity: 1 !important;
 }
 
 .footer {

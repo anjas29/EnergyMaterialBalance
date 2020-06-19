@@ -103,6 +103,19 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             return new JsonResult(_result);
         }
 
+        [HttpDelete]
+        [Route("deletePoint/{pointId}")]
+        public async Task<IActionResult> DeletePoint(int pointId)
+        {
+            var selectedPoint = await _pointsRepository.GetById(pointId);
+            _result.SelectedPoint = selectedPoint;
+            await _pointsRepository.DeleteWithDependent(pointId);
+            _result.Points = await _pointsRepository.GetAllPoints(selectedPoint.BgroupId);
+
+            return new JsonResult(_result);
+        }
+
+
         [HttpPost]
         [Route("createBGroup")]
         public async Task<IActionResult> CreateBgroup([FromBody] Bgroups model)

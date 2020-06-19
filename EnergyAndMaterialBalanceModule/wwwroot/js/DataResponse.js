@@ -6,7 +6,14 @@
     selectedPoint: null,
     sources: null,
     periods: null,
-    tags: null,
+    tags: {
+        seicVMappingHistorian: null,
+        seicVMappingIteh: null,
+        seicVMappingManual: null
+    },
+    selectedSource: null,
+    selectedTag: null,
     formula: null,
-    parameters: null
+    parameters: null,
+    afterBGroupCreation: false,
 };

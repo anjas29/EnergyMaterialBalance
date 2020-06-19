@@ -28,5 +28,20 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
             return await Context.Points.Where(t => t.BgroupId == bgroupId).Include(f => f.Source).Include(f => f.Period).ToListAsync();
         }
 
+        public async Task DeleteWithDependent(int pointId)
+        {
+            var point = await GetById(pointId);
+            var formula = point.Rules.Select(t => t.RuleId).ToList();
+
+            var param = Context.Prule.Where(i => formula.Contains((int)i.RuleId)).ToList();
+
+            Context.Prule.RemoveRange(param);
+
+            Context.Rules.RemoveRange(point.Rules);
+
+            Context.Points.Remove(point);
+
+            Context.SaveChanges();
+        }
     }
 }
