@@ -48,9 +48,25 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
                 }
             }
         }
+
+        private async Task DeleteChildren(Bgroups group)
+        {
+            if (group.InverseBgroupIdparentNavigation != null)
+            {
+                foreach (var g in group.InverseBgroupIdparentNavigation)
+                {
+                    var children = await GetChildrenAsync(g.BgroupId);
+                    g.InverseBgroupIdparentNavigation = children.ToList();
+                    Context.Bgroups.Remove(g);
+                    Context.Bgroups.RemoveRange(g.InverseBgroupIdparentNavigation);
+                    await DeleteChildren(g);
+                }
+            }
+        }
         public async Task DeleteWithDependent(int groupid)
         {
             var g = await GetById(groupid);
+
 
             foreach (var p in g.Points)
             {
@@ -63,7 +79,8 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
             }
 
             Context.Points.RemoveRange(g.Points);
-            Context.Bgroups.RemoveRange(g.InverseBgroupIdparentNavigation);
+
+            await DeleteChildren(g);
             Context.Bgroups.Remove(g);
 
             Context.SaveChanges();
@@ -72,10 +89,6 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
         public override Task<Bgroups> GetById(int id)
         {
             return Context.Bgroups.Where(t => t.BgroupId == id)
-                .Include(t => t.Points)
-                .ThenInclude(c=> c.Period)
-                .Include(t => t.Points)
-                .ThenInclude(t => t.Source)
                 .Include(t => t.Points)
                 .ThenInclude(t => t.Rules)
                 .Include(t => t.InverseBgroupIdparentNavigation)

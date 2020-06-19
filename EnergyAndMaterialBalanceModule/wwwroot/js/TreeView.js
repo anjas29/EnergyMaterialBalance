@@ -12,47 +12,79 @@
             textField: 'bgroupName',
             childrenField: "inverseBgroupIdparentNavigation",
             select: function (e, node, id) {
-                TreeView.getPoints(id);
+                if (!DataResponse.afterBGroupCreation) {
+                    TreeView.getPoints(id);
+                }
+                Utils.buttonDisabled('#btnDeleteBGroupModal', false);
+                Utils.buttonDisabled('#btnUpdateBGroupModal', false);
+                Utils.buttonDisabled('#btnCreatePointModal', false);
+                DataResponse.afterBGroupCreation = false;
             },
             unselect: function (e, node, id) {
+                DataResponse.selectedBGroup = null;
                 TableView.clear();
                 ValidDisbalance.clear()
                 Utils.buttonDisabled('#btnDeleteBGroupModal', true);
                 Utils.buttonDisabled('#btnUpdateBGroupModal', true);
+                Utils.buttonDisabled('#btnCreatePointModal', true);
+                Utils.buttonDisabled('#btnUpdatePointModal', true);
+                Utils.buttonDisabled('#btnDeletePointModal', true);
+            },
+            collapse: function (e, node, id) {
+                TreeView.tree.unselectAll();
+                TreeView.tree.select(node);
+            },
+            expand: function (e, node, id) {
+                TreeView.tree.unselectAll();
+                TreeView.tree.select(node);
             }
         });
 
         this.tree.render(bgroups);
     },
     getPoints: async function (bgroupId) {
-        const response = await fetch("main/getPoints/" + bgroupId, {
+        $.ajax({
             method: "GET",
+            url: "main/getPoints/" + bgroupId,
             headers: { "Accept": "application/json" }
-        });
 
-        if (response.ok === true) {
-            const result = await response.json();
+        }).done(function (result) {
+            DataResponse.selectedBGroup = result.selectedBGroup;
+            DataResponse.sources = result.sources;
+            DataResponse.periods = result.periods;
+            DataResponse.tags.seicVMappingHistorian = result.seicVMappingHistorian;
+            DataResponse.tags.seicVMappingIteh = result.seicVMappingIteh;
+            DataResponse.tags.seicVMappingManual = result.seicVMappingManual;
+
             TableView.clear();
             TableView.fill(result.points);
             ValidDisbalance.fill(result.selectedBGroup);
             Utils.buttonDisabled('#btnDeleteBGroupModal', false);
             Utils.buttonDisabled('#btnUpdateBGroupModal', false);
-        }
-        else {
-            var selections = TreeView.tree.getSelections();
-            var node = TreeView.tree.getNodeById(selections[0]);
-            var bgroup = node.find('span')[2].innerText;
-            Message.show(true, "Не удалось получить список точек учета и допустимый дисбаланс для группы '" + bgroup + "'!");
-            TreeView.tree.unselectAll();
-        }
+            Utils.buttonDisabled('#btnCreatePointModal', false);
+            Utils.buttonDisabled('#btnUpdatePointModal', true);
+        }).fail(function (result, textStatus) {
+            if (textStatus !== 'abort') {
+                var selections = TreeView.tree.getSelections();
+                var node = TreeView.tree.getNodeById(selections[0]);
+                var bgroup = node.find('span')[2].innerText;
+                Message.show(true, "Не удалось получить список точек учета и допустимый дисбаланс для группы '" + bgroup + "'!");
+                TreeView.tree.unselectAll();
+            }
+        });
     },
     addNode: function (createdBGroup) {
+        DataResponse.afterBGroupCreation = true;
         var parent = TreeView.tree.getNodeById(createdBGroup.bgroupIdparent);
         this.tree.off('dataBound');
         this.tree.addNode(createdBGroup, parent);
         var node = TreeView.tree.getNodeById(createdBGroup.bgroupId);
+        if (parent) {
+            this.tree.expand(parent);
+        }
         this.tree.unselectAll();
         this.tree.select(node);
+
     },
     updateNode: function (updateBGroup) {
         this.tree.updateNode(updateBGroup.bgroupId, updateBGroup);

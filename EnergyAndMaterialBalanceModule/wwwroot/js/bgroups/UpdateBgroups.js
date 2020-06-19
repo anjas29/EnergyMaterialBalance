@@ -15,6 +15,7 @@
 
         this.form.on('submit', function (e) {
             if (UpdateBgroups.form.valid()) {
+                UpdateBgroups.form.find(':input[type=submit]').prop('disabled', true);
                 e.preventDefault();
                 UpdateBgroups.updateBgroup();
             }
@@ -24,7 +25,9 @@
     },
     show: function () {
         Utils.clearModalMessage('#updateMessage');
+
         this.validator.resetForm();
+        this.form.find(':input[type=submit]').prop('disabled', false);
 
         $('#updateBGroupId').val(DataResponse.selectedBGroup.bgroupId);
         $('#updateBGroupName').val(DataResponse.selectedBGroup.bgroupName);
@@ -34,27 +37,26 @@
         bgroupNameVal = this.modal.name.val();
         validDisbalanceVal = this.modal.validDisbalance.val();
         bgroupIdVal = this.modal.bgroupId.val();
-
-        const response = await fetch("/main/UpdateBGroup", {
+        $.ajax({
             method: "POST",
+            url: "/main/UpdateBGroup",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({
+            data: JSON.stringify({
                 bgroupId: bgroupIdVal,
                 bgroupName: bgroupNameVal,
                 validDisbalance: validDisbalanceVal
             })
-        });
-
-        if (response.ok === true) {
-            Utils.clearModalMessage('#updateMessage');
-            const result = await response.json();
-            this.ui.modal('hide');
+        }).done(function (result) {
+            Utils.clearModalMessage('#updateBGroupMessage');
+            UpdateBgroups.ui.modal('hide');
             TreeView.updateNode(result.selectedBGroup);
             Message.show(false, "Балансовая группа '" + result.selectedBGroup.bgroupName + "' была успешно обновлена!");
-        }
-        else {
-            Utils.fillModalMessage('#updateMessage', "Не удалось изменить балансовую группу!");
-        }
+        }).fail(function (result, textStatus) {
+            if (textStatus !== 'abort') {
+                Utils.fillModalMessage('#updateBGroupMessage', "Не удалось изменить балансовую группу!");
+                UpdateBgroups.form.find(':input[type=submit]').prop('disabled', false);
+            }
+        });
     },
     setValidator: function () {
         this.validator = this.form.validate({
