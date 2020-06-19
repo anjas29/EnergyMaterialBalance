@@ -14,14 +14,10 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
 
         }
 
-        async Task<IEnumerable<Rules>> IRulesRepository.GetAllRules()
+        public async Task<Rules> GetRule(int pointId)
         {
-            return (IEnumerable<Rules>)await GetAll().ToListAsync();
-        }
+            return await Context.Rules.Where(t => t.PointId == pointId).Include(t => t.Point).FirstOrDefaultAsync();
 
-        async Task<IEnumerable<Rules>> IRulesRepository.GetAllFormulas()
-        {
-            return (IEnumerable<Rules>)await GetAll().ToListAsync();
         }
     }
 }

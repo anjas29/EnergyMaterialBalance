@@ -21,6 +21,8 @@ namespace EnergyAndMaterialBalanceModule.Controllers
         private readonly IPointsRepository _pointsRepository;
         private readonly ISourcesRepository _sourcesRepository;
         private readonly IPeriodsRepository _periodsRepository;
+        private readonly IRulesRepository _rulesRepository;
+        private readonly IPruleRepository _pruleRepository;
         private readonly ISeicVMappingHistorianRepository _seicVMappingHistorianRepository;
         private readonly ISeicVMappingItehRepository _seicVMappingItehRepository;
         private readonly ISeicVMappingManualRepository _seicVMappingManualRepository;
@@ -31,6 +33,7 @@ namespace EnergyAndMaterialBalanceModule.Controllers
         public MainController(ILogger<MainController> logger, IResourcesRepository resourceRepository,
             IBGroupsRepository bgroupsRepository, IPointsRepository pointsRepository,
             ISourcesRepository sourcesRepository, IPeriodsRepository periodsRepository,
+            IPruleRepository pruleRepository, IRulesRepository rulesRepository,
             ISeicVMappingHistorianRepository seicVMappingHistorianRepository,
             ISeicVMappingItehRepository seicVMappingItehRepository,
             ISeicVMappingManualRepository seicVMappingManualRepository)
@@ -41,6 +44,8 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             _pointsRepository = pointsRepository;
             _sourcesRepository = sourcesRepository;
             _periodsRepository = periodsRepository;
+            _pruleRepository = pruleRepository;
+            _rulesRepository = rulesRepository;
             _seicVMappingHistorianRepository = seicVMappingHistorianRepository;
             _seicVMappingItehRepository = seicVMappingItehRepository;
             _seicVMappingManualRepository = seicVMappingManualRepository;
@@ -77,7 +82,7 @@ namespace EnergyAndMaterialBalanceModule.Controllers
         {
             var selectedBGroup = await _bgroupsRepository.GetById(bgroupId);
             _result.SelectedBGroup = selectedBGroup;
-            _result.Points = await _pointsRepository.GetAlPonts(selectedBGroup.BgroupId);
+            _result.Points = await _pointsRepository.GetAllPoints(selectedBGroup.BgroupId);
             _result.Sources = _sourcesRepository.GetAll().ToList();
             _result.Periods = _periodsRepository.GetAll().ToList();
             _result.SeicVMappingHistorian = _seicVMappingHistorianRepository.GetAll().ToList();
@@ -100,7 +105,7 @@ namespace EnergyAndMaterialBalanceModule.Controllers
 
         [HttpPost]
         [Route("createBGroup")]
-        public async Task<IActionResult> CreateBgroups([FromBody] Bgroups model)
+        public async Task<IActionResult> CreateBgroup([FromBody] Bgroups model)
         {
             await _bgroupsRepository.Create(model);
             _result.SelectedBGroup = model;
@@ -110,7 +115,7 @@ namespace EnergyAndMaterialBalanceModule.Controllers
 
         [HttpPost]
         [Route("updateBGroup")]
-        public async Task<IActionResult> UpdateBgroups([FromBody] Bgroups model)
+        public async Task<IActionResult> UpdateBgroup([FromBody] Bgroups model)
         {
             Bgroups bgroups = await _bgroupsRepository.GetById(model.BgroupId);
             bgroups.BgroupName = model.BgroupName;
@@ -118,6 +123,24 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             await _bgroupsRepository.Update(bgroups);
             _result.SelectedBGroup = bgroups;
 
+            return new JsonResult(_result);
+        }
+
+        [Route("getPoint/{pointId}")]
+        public async Task<IActionResult> GetPoint(int pointId)
+        {
+            _result.SelectedPoint = await _pointsRepository.GetById(pointId);
+
+            if (_result.SelectedPoint.Direction.Equals("~")) 
+            {
+                _result.Formula = await _rulesRepository.GetRule(pointId);
+                if (_result.Formula != null)
+                {
+                    _result.Parameters = await _pruleRepository.GetParameters(_result.Formula.RuleId);
+                }
+            }
+
+           
             return new JsonResult(_result);
         }
 
