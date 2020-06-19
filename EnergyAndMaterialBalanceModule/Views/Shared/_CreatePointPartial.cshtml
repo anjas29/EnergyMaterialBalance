@@ -1,0 +1,90 @@
+﻿
+<button type="button" id="btnCreatePointModal" class="btn vertical-crd-button" data-toggle="modal" data-target="#createPointModal" disabled>
+    <i class="fas fa-plus"></i>
+</button>
+
+<!-- Modal Window-->
+<div class="modal fade" id="createPointModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <form id="createPointForm">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content text-left">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create Point</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" id="createPointMessage" role="alert">
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="createPointName">Point Name</label>
+                            <input type="text" class="form-control border-radius-zero" id="createPointName" placeholder="Point Name" name="createPointName">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="createPointValidMistake">Valid Mistake</label>
+                            <input type="number" class="form-control border-radius-zero" id="createPointValidMistake" placeholder="Valid Mistake" name="createPointValidMistake">
+                        </div>
+                    </div>
+                    <div class="form-row">
+
+                        <div class="form-group col-6">
+                            <label for="createPointDirection">Direction</label>
+                            <select class="form-control border-radius-zero" id="createPointDirection" name="createPointDirection">
+                                <option value="" disabled selected>Select Direction</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="createPointPeriod">Period</label>
+                            <select class="form-control border-radius-zero" id="createPointPeriod" name="createPointPeriod">
+                                <option value="" disabled selected> Select Period </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="createPointSource">Source</label>
+                        <select class="form-control border-radius-zero" id="createPointSource" name="createPointSource">
+                            <option value="" disabled selected> Select Source </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="createPointTag">Tag</label>
+                        <div id="tagCreate" class="input-group">
+                            <input type="text" class="form-control border-radius-zero" id="createPointTag" name="createPointTag" placeholder="Select tag" readonly="readonly">
+                            <div class="input-group-append">
+                                <button class="btn form-select-button" id="selectCreatePointTag" type="button" data-toggle="collapse" data-target="#collapseCreatePoint" aria-expanded="false" aria-controls="collapseCreatePoint">Select</button>
+                            </div>
+
+                        </div>
+                        <div class="collapse mt-4 text-center" id="collapseCreatePoint">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="border border-radius-zero bg-white text-dark point-list">
+                                        <div class="table-responsive">
+                                            <table id="createPointTagTable" class="table table-sm table-fixed modalTable">
+                                                <thead id="createPointTagTableHead" class="thead">
+
+                                                </thead>
+                                                <tbody id="createPointTagTableBody">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer text-center">
+                    <input name="bgroupId" id="createPointBgroupId" type="hidden" value="">
+                    <button type="button" class="btn modal-button-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn modal-button-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

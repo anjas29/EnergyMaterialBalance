@@ -12,10 +12,36 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
         public PointsRepository(SEICBalanceContext context) : base(context)
         {
         }
-        public async Task<IEnumerable<Points>> GetAlPonts(int bgroupId)
+
+        public override Task<Points> GetById(int id)
+        {
+            return Context.Points.Where(t => t.PointId == id)
+                .Include(c => c.Period)
+                .Include(t => t.Source)
+                .Include(t => t.Rules)
+                .FirstAsync();
+        }
+
+
+        public async Task<IEnumerable<Points>> GetAllPoints(int bgroupId)
         {
             return await Context.Points.Where(t => t.BgroupId == bgroupId).Include(f => f.Source).Include(f => f.Period).ToListAsync();
         }
 
+        public async Task DeleteWithDependent(int pointId)
+        {
+            var point = await GetById(pointId);
+            var formula = point.Rules.Select(t => t.RuleId).ToList();
+
+            var param = Context.Prule.Where(i => formula.Contains((int)i.RuleId)).ToList();
+
+            Context.Prule.RemoveRange(param);
+
+            Context.Rules.RemoveRange(point.Rules);
+
+            Context.Points.Remove(point);
+
+            Context.SaveChanges();
+        }
     }
 }

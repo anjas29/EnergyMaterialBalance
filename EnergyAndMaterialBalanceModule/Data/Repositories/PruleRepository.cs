@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace EnergyAndMaterialBalanceModule.Data.Repositories
 {
-    public class PrulesRepository : BaseRepository<Prule, SEICBalanceContext>, IPruleRepository
+    public class PruleRepository : BaseRepository<Prule, SEICBalanceContext>, IPruleRepository
     {
-        public PrulesRepository(SEICBalanceContext context) : base(context)
+        public PruleRepository(SEICBalanceContext context) : base(context)
         {
 
         }
 
-        public async Task<IEnumerable<Prule>> GetAllRules()
+        public async Task<IEnumerable<Prule>> GetParameters(int ruleId)
         {
-            return (IEnumerable<Prule>)await GetAll().ToListAsync();
+            return await Context.Prule.Where(t => t.RuleId == ruleId).Include(t => t.Rule).ToListAsync();
         }
 
     }

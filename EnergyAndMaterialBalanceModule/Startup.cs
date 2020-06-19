@@ -49,6 +49,9 @@ namespace EnergyAndMaterialBalanceModule
             services.AddScoped<IPointsRepository, PointsRepository>();
             services.AddScoped<ISourcesRepository, SourcesRepository>();
             services.AddScoped<IPeriodsRepository, PeriodsRepository>();
+            services.AddScoped<IRulesRepository, RulesRepository>();
+            services.AddScoped<IPruleRepository, PruleRepository>();
+
             services.AddScoped<ISeicVMappingHistorianRepository, SeicVMappingHistorianRepository>();
             services.AddScoped<ISeicVMappingItehRepository, SeicVMappingItehRepository>();
             services.AddScoped<ISeicVMappingManualRepository, SeicVMappingManualRepository>();

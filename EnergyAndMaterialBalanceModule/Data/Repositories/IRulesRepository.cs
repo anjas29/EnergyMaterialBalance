@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace EnergyAndMaterialBalanceModule.Data.Repositories
 {
-    interface IRulesRepository : IBaseRepository<Rules>
+    public interface IRulesRepository : IBaseRepository<Rules>
     {
-        Task<IEnumerable<Rules>> GetAllRules();
-        Task<IEnumerable<Rules>> GetAllFormulas();
+        Task<Rules> GetRule(int pointId);
     }
 }

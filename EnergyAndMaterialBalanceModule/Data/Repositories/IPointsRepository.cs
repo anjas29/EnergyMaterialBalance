@@ -6,6 +6,7 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
 {
     public interface IPointsRepository : IBaseRepository<Points>
     {
-        Task<IEnumerable<Points>> GetAlPonts(int bgroupId);
+        Task<IEnumerable<Points>> GetAllPoints(int bgroupId);
+        Task DeleteWithDependent(int pointId);
     }
 }

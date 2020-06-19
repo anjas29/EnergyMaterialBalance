@@ -15,8 +15,8 @@
             CreateBgroups.show();
         });
         this.form.on('submit', function (e) {
-            console.log('create submit');
             if (CreateBgroups.form.valid()) {
+                CreateBgroups.form.find(':input[type=submit]').prop('disabled', true);
                 e.preventDefault();
                 CreateBgroups.createBgroups();
             }
@@ -27,6 +27,9 @@
         this.modal.name.val("");
         this.modal.validDisbalanace.val("");
         this.modal.resourceId.val(DataResponse.selectedResource.resourceId);
+        this.form.find(':input[type=submit]').prop('disabled', false);
+        Utils.clearModalMessage('#createBGroupMessage');
+        this.validator.resetForm();
 
         if (DataResponse.selectedBGroup != null) {
             this.modal.asChild.val(DataResponse.selectedBGroup.bgroupId);
@@ -51,31 +54,29 @@
         resourceIdVal = this.modal.resourceId.val();
         bGroupIdParentVal = $('input:radio[name="createBGroupIdParent"]:checked').val();
 
-        console.log(bGroupNameVal);
-        console.log(validDisbalanceVal);
-        console.log(resourceIdVal);
-        console.log(bGroupIdParentVal);
-
-        const response = await fetch("/main/CreateBGroup", {
+        $.ajax({
             method: "POST",
+            url: "/main/CreateBGroup",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({
+            data: JSON.stringify({
                 bgroupName: bGroupNameVal,
                 validDisbalance: validDisbalanceVal,
                 resourceId: parseInt(resourceIdVal),
                 bgroupIdparent: bGroupIdParentVal
             })
-        });
-        if (response.ok === true) {
-            Utils.clearModalMessage('#createMessage');
-            const result = await response.json();
-            $('#createBGroupModal').modal('hide');
+
+        }).done(function (result) {
+            Utils.clearModalMessage('#createBGroupMessage');
+            CreateBgroups.ui.modal('hide');
             TreeView.addNode(result.selectedBGroup);
+            DataResponse.selectedBGroup = result.selectedBGroup;
             Message.show(false, "Балансовая группа '" + result.selectedBGroup.bgroupName + "' была успешно добавлена!");
-        }
-        else {
-            Utils.fillModalMessage('#createMessage', "Не удалось создать балансовую группу!");
-        }
+        }).fail(function (result, textStatus) {
+            if (textStatus !== 'abort') {
+                Utils.fillModalMessage('#createBGroupMessage', "Не удалось создать балансовую группу!");
+                CreateBGroups.form.find(':input[type=submit]').prop('disabled', false);
+            }
+        });
     },
     setValidator: function () {
         this.validator = this.form.validate({
