@@ -1,13 +1,13 @@
-﻿var xhrPool;
+﻿var xhr;
 
 $.ajaxSetup({
     beforeSend: function (jqXHR) {
-        if (xhrPool)
-            xhrPool.abort();
+        if (xhr)
+            xhr.abort();
 
-        xhrPool = jqXHR;
+        xhr = jqXHR;
     },
     complete: function (jqXHR) {
-        xhrPool = null;
+        xhr = null;
     }
 });
