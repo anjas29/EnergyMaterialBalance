@@ -1,6 +1,7 @@
 ﻿var DeleteBgroups = {
     ui: $('#deleteBGroupModal'),
     deleteButton: $('#btnDeleteBGroupModal'),
+    modalMessage: $('#deleteBGroupMessage'),
     form: $('#deleteBGroupForm'),
     modal: {
         name: $('#deleteBGroupName'),
@@ -13,7 +14,8 @@
             DeleteBgroups.show();
         });
         this.form.on('submit', function (e) {
-            DeleteBgroups.form.find(':input[type=submit]').prop('disabled', true);
+            Utils.submitDisabled(this, true);
+
             e.preventDefault();
             DeleteBgroups.deleteBgroups();
         });
@@ -21,36 +23,38 @@
     },
     show: function () {
         var selectedBGroup = DataResponse.selectedBGroup;
-        this.modal.name.text(selectedBGroup.bgroupName);
+        Utils.submitDisabled(this.form, false);
+        Utils.clearModalMessage(this.modalMessage);
         this.modal.children.hide();
-        this.form.find(':input[type=submit]').prop('disabled', false);
-        Utils.clearModalMessage('#deleteBGroupMessage');
+
+        this.modal.name.text(selectedBGroup.bgroupName);
+        this.modal.bgroupId.val(selectedBGroup.bgroupId);
 
         var hasChildren = selectedBGroup.inverseBgroupIdparentNavigation.length;
         if (hasChildren > 0)
             this.modal.children.show();
 
-        this.modal.bgroupId.val(selectedBGroup.bgroupId);
     },
     deleteBgroups: async function () {
-        bgroupId = DeleteBgroups.modal.bgroupId.val();
+        bgroupIdVal = DeleteBgroups.modal.bgroupId.val();
+
         $.ajax({
-            method: "DELETE",
-            url: "/main/deleteBGroup/" + bgroupId,
-            headers: { "Accept": "application/json" }
+            method: 'DELETE',
+            url: '/main/deleteBGroup/' + bgroupIdVal,
+            headers: { 'Accept': 'application/json' }
 
         }).done(function (result) {
-            Utils.clearModalMessage('#deleteBGroupMessage');
-            Message.show(false, "Балансовая группа '" + result.selectedBGroup.bgroupName + "' была успешно удалена!")
-            TreeView.removeNode(result.selectedBGroup);
-            Utils.buttonDisabled('#btnCreateBGroupModal', false);
-            Utils.buttonDisabled('#btnDeleteBGroupModal', true);
-            Utils.buttonDisabled('#btnUpdateBGroupModal', true);
+            Utils.clearModalMessage(DeleteBgroups.modalMessage);
+            Message.show(false, Message.successes.deleteBGroupSuccess.format(result.selectedBGroup.bgroupName));
             DeleteBgroups.ui.modal('hide');
+
+            TreeView.removeNode(result.selectedBGroup);
+
+
         }).fail(function (result, textStatus) {
             if (textStatus !== 'abort') {
-                Utils.fillModalMessage('#deleteBGroupMessage', "Не удалось удалить балансовую группу '" + DataResponse.selectedBGroup.bgroupName + "'!");
-                DeleteBgroups.form.find(':input[type=submit]').prop('disabled', false);
+                Utils.fillModalMessage(DeleteBgroups.modalMessage, Message.errors.deleteBGroupError.format(DataResponse.selectedBGroup.bgroupName));
+                Utils.submitDisabled(DeleteBgroups.form, false);
             }
         });
     }
