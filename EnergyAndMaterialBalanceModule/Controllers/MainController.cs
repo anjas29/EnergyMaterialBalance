@@ -83,7 +83,7 @@ namespace EnergyAndMaterialBalanceModule.Controllers
             var selectedBGroup = await _bgroupsRepository.GetById(bgroupId);
             _result.SelectedBGroup = selectedBGroup;
             _result.Points = await _pointsRepository.GetAllPoints(selectedBGroup.BgroupId);
-            _result.Sources = _sourcesRepository.GetAll().ToList();
+            _result.Sources = _sourcesRepository.GetAll().ToList().Take(3);
             _result.Periods = _periodsRepository.GetAll().ToList();
             _result.SeicVMappingHistorian = _seicVMappingHistorianRepository.GetAll().ToList();
             _result.SeicVMappingIteh = _seicVMappingItehRepository.GetAll().ToList();
