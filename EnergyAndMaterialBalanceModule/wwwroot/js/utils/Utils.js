@@ -1,30 +1,16 @@
 ﻿var Utils = {
-    directions: [
-        {
-            value: '+',
-            name: '+',
-        },
-        {
-            value: '-',
-            name: '-',
-        },
-        {
-            value: '~',
-            name: '~',
-        }
-    ],
     buttonDisabled: function (button, state) {
         $(button).prop('disabled', state);
     },
-    selectElement: function (element, valueToSelect) {
-        $(element).val(valueToSelect);
+    submitDisabled: function (input, state) {
+        $(input).find(':input[type=submit]').prop('disabled', state);
     },
     fillModalMessage: function (element, message) {
         $(element).show();
         $(element).text(message);
     },
     clearModalMessage: function (element) {
-        $(element).text("");
+        $(element).text('');
         $(element).hide();
     },
     populateSelect: function (element, selectedElement, data, value, name) {
@@ -37,9 +23,7 @@
 
             element.append(option);
         }
-
         Utils.fillSelect(element, selectedElement);
-
     },
     clearSelect: function (element) {
         $(element + ' option').each(function () {
@@ -50,11 +34,12 @@
     },
     fillSelect: function (element, selectedElement) {
         if (selectedElement === null) {
-            Utils.selectElement(element, '');
+            element.val('');
         }
         else {
-            Utils.selectElement(element, selectedElement);
+            element.val(selectedElement);
         }
-    }
+    }, 
 
 };
+

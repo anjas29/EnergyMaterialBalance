@@ -2,38 +2,45 @@
     ui: $('#createBGroupModal'),
     addButton: $('#btnCreateBGroupModal'),
     form: $('#createBGroupForm'),
+    modalMessage: $('#createBGroupMessage'),
     validator: null,
     modal: {
         name: $('#createBGroupName'),
         validDisbalanace: $('#createValidDisbalance'),
         resourceId: $('#createResourceId'),
         asChild: $('#asChild'),
-        sameLevel: $('#sameLevel')
+        sameLevel: $('#sameLevel'),
     },
     init: function () {
         this.addButton.click(function () {
             CreateBgroups.show();
         });
+
         this.form.on('submit', function (e) {
             if (CreateBgroups.form.valid()) {
-                CreateBgroups.form.find(':input[type=submit]').prop('disabled', true);
+                Utils.submitDisabled(this, true);
                 e.preventDefault();
                 CreateBgroups.createBgroups();
             }
         });
+
         this.setValidator();
     },
     show: function () {
-        this.modal.name.val("");
-        this.modal.validDisbalanace.val("");
-        this.modal.resourceId.val(DataResponse.selectedResource.resourceId);
-        this.form.find(':input[type=submit]').prop('disabled', false);
-        Utils.clearModalMessage('#createBGroupMessage');
+        Utils.clearModalMessage(this.modalMessage);
+        Utils.submitDisabled(this.form, false);
         this.validator.resetForm();
+
+
+        this.modal.name.val('');
+        this.modal.validDisbalanace.val('');
+        this.modal.resourceId.val(DataResponse.selectedResource.resourceId);
+
 
         if (DataResponse.selectedBGroup != null) {
             this.modal.asChild.val(DataResponse.selectedBGroup.bgroupId);
             this.modal.sameLevel.val(DataResponse.selectedBGroup.bgroupIdparent);
+
             this.modal.asChild.prop('disabled', false);
             this.modal.asChild.prop('checked', false);
             this.modal.sameLevel.prop('checked', false);
@@ -42,6 +49,7 @@
         else {
             this.modal.sameLevel.val(null);
             this.modal.asChild.val(null);
+
             this.modal.asChild.prop('disabled', true);
             this.modal.asChild.prop('checked', false);
             this.modal.sameLevel.prop('checked', true);
@@ -55,26 +63,28 @@
         bGroupIdParentVal = $('input:radio[name="createBGroupIdParent"]:checked').val();
 
         $.ajax({
-            method: "POST",
-            url: "/main/CreateBGroup",
-            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            method: 'POST',
+            url: '/main/CreateBGroup',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
             data: JSON.stringify({
                 bgroupName: bGroupNameVal,
                 validDisbalance: validDisbalanceVal,
                 resourceId: parseInt(resourceIdVal),
                 bgroupIdparent: bGroupIdParentVal
             })
-
         }).done(function (result) {
-            Utils.clearModalMessage('#createBGroupMessage');
+            Utils.clearModalMessage(CreateBgroups.modalMessage);
             CreateBgroups.ui.modal('hide');
+
             TreeView.addNode(result.selectedBGroup);
             DataResponse.selectedBGroup = result.selectedBGroup;
-            Message.show(false, "Балансовая группа '" + result.selectedBGroup.bgroupName + "' была успешно добавлена!");
+
+            Message.show(false, Message.successes.createBGroupSuccess.format(result.selectedBGroup.bgroupName));
+
         }).fail(function (result, textStatus) {
             if (textStatus !== 'abort') {
-                Utils.fillModalMessage('#createBGroupMessage', "Не удалось создать балансовую группу!");
-                CreateBGroups.form.find(':input[type=submit]').prop('disabled', false);
+                Utils.fillModalMessage(CreateBgroups.modalMessage, Message.errors.createBGroupError);
+                Utils.submitDisabled(CreateBgroups.form, false);
             }
         });
     },
@@ -93,19 +103,7 @@
                     required: true,
                 }
             },
-            messages: {
-                createBGroupName: {
-                    required: "Укажите имя балансовой группы, это поле не может быть пустым!",
-                    maxlength: "Название группы должно содержать меньше 255 символов!"
-                },
-                createValidDisbalance: {
-                    required: "Укажите допустимый дисбаланс, это поле не может быть пустым!",
-                    number: "Укажите допустимый дисбаланс в правильном формате!",
-                },
-                createBGroupIdParent: {
-                    required: "Укажите уровень, это поле не может быть пустым!",
-                }
-            },
+            messages: Message.validation.createBGroup,
         });
     }
 };

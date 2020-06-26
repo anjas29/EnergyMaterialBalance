@@ -1,157 +1,42 @@
 ﻿var UpdatePoints = {
     ui: $('#updatePointModal'),
-    addButton: $('#btnUpdatePointModal'),
+    updateButton: $('#btnUpdatePointModal'),
     form: $('#updatePointForm'),
+    modalMessage: $('#updatePointMessage'),
+    collapse: $('#collapseUpdatePoint'),
     validator: null,
     table: {
         ui: $('#updatePointTagTable'),
-        fill: function (tags) {
-            var heads = $('#updatePointTagTableHead');
+        selectButton: $('#selectUpdatePointTag'),
+        fill: function (selectedSource, tags) {
+            var tdData;
+            var thData;
+            if (selectedSource === 1) {
+                tdData = CommonResources.tables.tags.body.iteh;
+                thData = CommonResources.tables.tags.head.iteh;
+            } else {
+                tdData = CommonResources.tables.tags.body.historian_manual;
+                thData = CommonResources.tables.tags.head.historian_manual;
+            }
 
-            heads.append(UpdatePoints.table.head());
-
-            var rows = $('#updatePointTagTableBody');
-            tags.forEach((tag, i) => {
-                rows.append(UpdatePoints.table.row(tag, i));
-            });
+            Table.fillHead(this.ui, thData);
+            Table.fillBody(this.ui, tags, tdData);
         },
         clear: function () {
-            $('#updatePointTagTableBody').html('');
-            $('#updatePointTagTableHead').html('');
+            DataResponse.selectedTag = null;
+            UpdatePoints.modal.tag.val('');
+            Table.clear(this.ui, true);
         },
-        head: function (selectedSource) {
-            var trData;
-            const tr = document.createElement('tr');
-            tr.className = 'd-flex';
-
-            if (DataResponse.selectedSource === 1) {
-                trData = [
-                    {
-                        col: 'col-1',
-                        data: '#'
-                    },
-
-                    {
-                        col: 'col-2',
-                        data: 'LSName'
-                    },
-
-                    {
-                        col: 'col-3',
-                        data: 'Имя базы данных'
-                    },
-
-                    {
-                        col: 'col-3',
-                        data: 'Имя таблицы'
-                    },
-
-                    {
-                        col: 'col-3',
-                        data: 'Имя тега'
-                    },
-                ];
-            } else {
-                trData = [
-                    {
-                        col: 'col-1',
-                        data: '#'
-                    },
-
-                    {
-                        col: 'col-4',
-                        data: 'Имя тега'
-                    },
-
-                    {
-                        col: 'col-7',
-                        data: 'Описание'
-                    },
-
-                ];
-            }
-
-            trData.forEach((thData) => {
-                const th = document.createElement('th');
-                th.append(thData.data);
-                th.className = thData.col;
-                tr.append(th);
-            });
-            return tr;
-        },
-        row: function (tag, i) {
-            var trData;
-            const tr = document.createElement('tr');
-            tr.className = 'd-flex';
-
-            if (DataResponse.selectedSource === 1) {
-                trData = [
-                    {
-                        col: 'col-1',
-                        data: i + 1
-                    },
-
-                    {
-                        col: 'col-2 lsname',
-                        data: tag.lsname
-                    },
-
-                    {
-                        col: 'col-3 dbname',
-                        data: tag.dbname
-                    },
-
-                    {
-                        col: 'col-3 tableName',
-                        data: tag.tableName
-                    },
-
-                    {
-                        col: 'col-3 tagName',
-                        data: tag.tagName
-                    },
-                ];
-            } else {
-                trData = [
-                    {
-                        col: 'col-1',
-                        data: i + 1,
-                    },
-
-                    {
-                        col: 'col-4 tagName',
-                        data: tag.tagName,
-                    },
-
-                    {
-                        col: 'col-7 description',
-                        data: tag.description,
-                    },
-
-                ];
-            }
-
-            trData.forEach((tdData) => {
-                const td = document.createElement('td');
-                td.append(tdData.data);
-                td.className = tdData.col;
-                tr.append(td);
-            });
-            return tr;
-        },
-
-        unselectRow: function () {
-            UpdatePoints.table.ui.find('tr').removeClass('highlight');
+        unselectTag: function () {
+            Table.unselectRow(this.ui);
             DataResponse.selectedTag = null;
             UpdatePoints.modal.tag.val(null);
         },
-        selectRow: function (rowData) {
-            var row = UpdatePoints.table.ui.find('td:contains(' + rowData + ')').parent();
-            UpdatePoints.table.unselectRow();
-            row.addClass('highlight');
+        selectTag: function (rowData) {
+            DataResponse.selectedTag = rowData;
+            Table.selectRow(this.ui, rowData);
         }
-    }
-    ,
+    },
     modal: {
         name: $('#updatePointName'),
         validMistake: $('#updatePointValidMistake'),
@@ -162,12 +47,13 @@
         pointId: $('#updatePointId')
     },
     init: function () {
-        this.addButton.click(function () {
+        this.updateButton.click(function () {
             UpdatePoints.show();
         });
         this.form.on('submit', function (e) {
             if (UpdatePoints.form.valid()) {
-                UpdatePoints.form.find(':input[type=submit]').prop('disabled', true);
+                Utils.submitDisabled(this, true);
+
                 e.preventDefault();
                 UpdatePoints.updatePoints();
             }
@@ -175,53 +61,46 @@
         this.setValidator();
         this.modal.source.change(function () {
             var sourceVal = parseInt($(this).val());
-            UpdatePoints.modal.tag.prop('readonly', true);
-            UpdatePoints.table.clear();
             DataResponse.selectedSource = sourceVal;
-            UpdatePoints.modal.tag.val('');
 
-            if (sourceVal === '') {
-                Utils.buttonDisabled('#selectUpdatePointTag', true);
-            }
-            else if (sourceVal === 1) {
-                Utils.buttonDisabled('#selectUpdatePointTag', false);
-                UpdatePoints.table.fill(DataResponse.tags.seicVMappingIteh);
+            UpdatePoints.table.clear();
+            UpdatePoints.modal.tag.prop('readonly', true);
+
+            if (sourceVal === 1) {
+                Utils.buttonDisabled(UpdatePoints.table.selectButton, false);
+                UpdatePoints.table.fill(sourceVal, DataResponse.tags.seicVMappingIteh);
             }
             else if (sourceVal === 2) {
-                Utils.buttonDisabled('#selectUpdatePointTag', false);
-                UpdatePoints.table.fill(DataResponse.tags.seicVMappingHistorian);
-
+                Utils.buttonDisabled(UpdatePoints.table.selectButton, false);
+                UpdatePoints.table.fill(sourceVal, DataResponse.tags.seicVMappingHistorian);
             }
             else if (sourceVal === 3) {
-                Utils.buttonDisabled('#selectUpdatePointTag', false);
-                UpdatePoints.table.fill(DataResponse.tags.seicVMappingManual);
+                Utils.buttonDisabled(UpdatePoints.table.selectButton, false);
+                UpdatePoints.table.fill(sourceVal, DataResponse.tags.seicVMappingManual);
+            } else {
+                Utils.buttonDisabled(UpdatePoints.table.selectButton, true);
+                UpdatePoints.collapse.collapse('hide');
             }
-            else {
-                UpdatePoints.modal.tag.prop('readonly', false);
-                Utils.buttonDisabled('#selectUpdatePointTag', true);
-                $('#collapseUpdatePoint').collapse('hide');
-            }
-
         });
 
         this.table.ui.delegate('tr', 'click', function () {
 
             var selected = $(this).hasClass('highlight');
-            UpdatePoints.table.unselectRow();
+            UpdatePoints.table.unselectTag();
             if (!selected) {
                 $(this).addClass('highlight');
-                DataResponse.selectedTag = $(this).find(".tagName").html();
-                UpdatePoints.modal.tag.val(DataResponse.selectedTag);
+                DataResponse.selectedTag = $(this).data('rowid');
+                UpdatePoints.modal.tag.val($(this).data('rowid'));
             }
         });
-
     },
 
     show: function () {
+        console.log(DataResponse.selectedPoint);
         this.modal.name.val(DataResponse.selectedPoint.pointName);
         this.modal.validMistake.val(DataResponse.selectedPoint.validMistake);
 
-        Utils.populateSelect(this.modal.direction, DataResponse.selectedPoint.direction, Utils.directions, 'value', 'name');
+        Utils.populateSelect(this.modal.direction, DataResponse.selectedPoint.direction, CommonResources.directions, 'value', 'name');
         Utils.populateSelect(this.modal.period, DataResponse.selectedPoint.periodId, DataResponse.periods, 'periodId', 'periodName');
         Utils.populateSelect(this.modal.source, DataResponse.selectedPoint.sourceId, DataResponse.sources, 'sourceId', 'sourceName');
         this.modal.pointId.val(DataResponse.selectedPoint.pointId);
@@ -231,44 +110,38 @@
         UpdatePoints.modal.tag.prop('readonly', true);
         UpdatePoints.table.clear();
         DataResponse.selectedSource = sourceVal;
-
         DataResponse.selectedTag = DataResponse.selectedPoint.tagname;
 
-        if (sourceVal === '') {
-            Utils.buttonDisabled('#selectUpdatePointTag', true);
-        }
-        else if (sourceVal === 1) {
-            Utils.buttonDisabled('#selectUpdatePointTag', false);
-            UpdatePoints.table.fill(DataResponse.tags.seicVMappingIteh);
-            UpdatePoints.table.selectRow(DataResponse.selectedTag);
+
+        if (sourceVal === 1) {
+            Utils.buttonDisabled(UpdatePoints.updateButton, false);
+            UpdatePoints.table.fill(sourceVal, DataResponse.tags.seicVMappingIteh);
+            UpdatePoints.table.selectTag(DataResponse.selectedTag);
 
         }
         else if (sourceVal === 2) {
-            Utils.buttonDisabled('#selectUpdatePointTag', false);
-            UpdatePoints.table.fill(DataResponse.tags.seicVMappingHistorian);
-            UpdatePoints.table.selectRow(DataResponse.selectedTag);
+            Utils.buttonDisabled(UpdatePoints.updateButton, false);
+            UpdatePoints.table.fill(sourceVal, DataResponse.tags.seicVMappingHistorian);
+            UpdatePoints.table.selectTag(DataResponse.selectedTag);
 
         }
         else if (sourceVal === 3) {
-            Utils.buttonDisabled('#selectUpdatePointTag', false);
-            UpdatePoints.table.fill(DataResponse.tags.seicVMappingManual);
-            UpdatePoints.table.selectRow(DataResponse.selectedTag);
+            Utils.buttonDisabled(UpdatePoints.updateButton, false);
+            UpdatePoints.table.fill(sourceVal, DataResponse.tags.seicVMappingManual);
+            UpdatePoints.table.selectTag(DataResponse.selectedTag);
 
         }
         else {
-            UpdatePoints.modal.tag.prop('readonly', false);
-            Utils.buttonDisabled('#selectUpdatePointTag', true);
-            $('#collapseUpdatePoint').collapse('hide');
+            Utils.buttonDisabled(UpdatePoints.updateButton, true);
         }
 
         this.modal.tag.val(DataResponse.selectedPoint.tagname);
-        $('#collapseUpdatePoint').collapse('hide');
-        Utils.clearModalMessage('#updatePointMessage');
-        this.form.find(':input[type=submit]').prop('disabled', false);
+        UpdatePoints.collapse.collapse('hide');
+        Utils.clearModalMessage(this.modalMessage);
+        Utils.submitDisabled(this.form, false);
         this.validator.resetForm();
 
     },
-
     updatePoints: async function () {
         pointNameVal = this.modal.name.val();
         validMistakeVal = this.modal.validMistake.val();
@@ -279,9 +152,9 @@
         pointIdVal = this.modal.pointId.val();
 
         $.ajax({
-            method: "POST",
-            url: "/main/UpdatePoint", 
-            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            method: 'POST',
+            url: '/main/UpdatePoint',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
             data: JSON.stringify({
                 pointId: pointIdVal,
                 direction: directionVal,
@@ -293,16 +166,18 @@
             })
 
         }).done(function (result) {
-            Utils.clearModalMessage('#updatePointMessage');
-            $('#updatePointModal').modal('hide');
-            TableView.unselectRow();
+            Utils.clearModalMessage(UpdatePoints.modalMessage);
+            UpdatePoints.ui.modal('hide');
+
             TableView.updatePoint(result.points, result.selectedPoint);
+
             DataResponse.selectedPoint = result.selectedPoint;
-            Message.show(false, "Точка учета '" + result.selectedPoint.pointName + "' была успешно обновлена!");
+
+            Message.show(false, Message.successes.updatePointSuccess.format(result.selectedPoint.pointName));
         }).fail(function (result, textStatus) {
             if (textStatus !== 'abort') {
-                Utils.fillModalMessage('#updatePointMessage', "Не удалось создать точку учета!");
-                UpdatePoints.form.find(':input[type=submit]').prop('disabled', false);
+                Utils.fillModalMessage(UpdatePoints.modalMessage, Message.errors.updatePointError);
+                Utils.submitDisabled(UpdatePoints.form, false);
             }
         });
     },
@@ -331,29 +206,7 @@
                 },
 
             },
-            messages: {
-                updatePointName: {
-                    required: "Укажите имя точки учета, это поле не может быть пустым!",
-                    maxlength: "Название точки учета должно содержать меньше 255 символов!"
-                },
-                updatePointValidMistake: {
-                    required: "Укажите допустимый дисбаланс, это поле не может быть пустым!",
-                    number: "Укажите допустимый дисбаланс в правильном формате!",
-                },
-                updatePointDirection: {
-                    required: "Укажите направление, это поле не может быть пустым!",
-                },
-                updatePointSource: {
-                    required: "Укажите источник, это поле не может быть пустым!",
-                },
-                updatePointPeriod: {
-                    required: "Укажите период, это поле не может быть пустым!",
-                },
-                updatePointTag: {
-                    required: "Укажите тег, это поле не может быть пустым!",
-
-                },
-            }
+            messages: Message.validation.updatePoint,
         });
     }
 };

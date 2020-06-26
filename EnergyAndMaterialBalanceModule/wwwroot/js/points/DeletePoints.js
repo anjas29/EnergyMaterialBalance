@@ -2,6 +2,7 @@
     ui: $('#deletePointModal'),
     deleteButton: $('#btnDeletePointModal'),
     form: $('#deletePointForm'),
+    modalMessage: $('#deletePointMessage'),
     modal: {
         name: $('#deletePointName'),
         formula: $('#deletePointFormula'),
@@ -13,44 +14,52 @@
             DeletePoints.show();
         });
         this.form.on('submit', function (e) {
-            DeletePoints.form.find(':input[type=submit]').prop('disabled', true);
+            Utils.submitDisabled(this, true);
+
             e.preventDefault();
             DeletePoints.deletePoints();
         });
 
     },
     show: function () {
-        var selectedPoint = DataResponse.selectedPoint;
-        this.modal.name.text(selectedPoint.pointName);
         this.modal.formula.hide();
-        this.form.find(':input[type=submit]').prop('disabled', false);
-        Utils.clearModalMessage('#deletePointMessage');
+        Utils.clearModalMessage(this.modalMessage);
+        Utils.submitDisabled(this.form, false);
+
+        var selectedPoint = DataResponse.selectedPoint;
+
+
+        this.modal.name.text(selectedPoint.pointName);
+        this.modal.pointId.val(selectedPoint.pointId);
+
 
         var hasFormula = selectedPoint.rules.length;
         if (hasFormula > 0)
             this.modal.formula.show();
 
-        this.modal.pointId.val(selectedPoint.pointId);
     },
     deletePoints: async function () {
-        pointId = DeletePoints.modal.pointId.val();
+        pointIdVal = DeletePoints.modal.pointId.val();
         $.ajax({
-            method: "DELETE",
-            url: "/main/deletePoint/" + pointId,
-            headers: { "Accept": "application/json" }
+            method: 'DELETE',
+            url: '/main/deletePoint/' + pointIdVal,
+            headers: { 'Accept': 'application/json' }
 
         }).done(function (result) {
-            Utils.clearModalMessage('#deletePointMessage');
-            Message.show(false, "Точка учета '" + result.selectedPoint.pointName + "' была успешно удалена!");
-            TableView.unselectRow();
-            TableView.removePoint(result.points);
-            Utils.buttonDisabled('#btnDeletePointModal', true);
-            Utils.buttonDisabled('#btnUpdatePointModal', true);
+            Utils.clearModalMessage(DeletePoints.modalMessage);
             DeletePoints.ui.modal('hide');
+
+            TableView.unselectPoint();
+            TableView.removePoint(result.points);
+
+            Message.show(false, Message.successes.deletePointSuccess.format(result.selectedPoint.pointName));
+
+            Utils.buttonDisabled(UpdatePoints.updateButton, true);
+            Utils.buttonDisabled(DeletePoints.deleteButton, true);
         }).fail(function (result, textStatus) {
             if (textStatus !== 'abort') {
-                Utils.fillModalMessage('#deletePointMessage', "Не удалось удалить точку учета '" + DataResponse.selectedPoint.pointName + "'!");
-                DeletePoints.form.find(':input[type=submit]').prop('disabled', false);
+                Utils.fillModalMessage(DeletePoints.modalMessage, Message.errors.deletePointError.format(DataResponse.selectedPoint.pointName));
+                Utils.submitDisabled(DeletePoints.form, false);
             }
         });
     }

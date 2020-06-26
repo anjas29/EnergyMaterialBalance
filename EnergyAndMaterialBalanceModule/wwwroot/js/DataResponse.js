@@ -15,5 +15,4 @@
     selectedTag: null,
     formula: null,
     parameters: null,
-    afterBGroupCreation: false,
 };

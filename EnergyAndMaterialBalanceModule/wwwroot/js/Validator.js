@@ -9,14 +9,15 @@ $.validator.setDefaults({
         $(element).removeClass(this.settings.errorElementClass).removeClass(errorClass);
     },
     errorPlacement: function (error, element) {
-        if (element.attr("name") == "createBGroupIdParent") {
-            error.insertAfter("#level");
+        var name = element.attr('name');
+        if (name === 'createBGroupIdParent') {
+            error.insertAfter('#createBGroupLevelError');
         }
-        else if (element.attr("name") == "createPointTag") {
-            error.insertAfter("#tagCreate");
+        else if (name === 'createPointTag') {
+            error.insertAfter('#сreatePointTagError');
         }
-        else if (element.attr("name") == "updatePointTag") {
-            error.insertAfter("#tagUpdate");
+        else if (name === 'updatePointTag') {
+            error.insertAfter('#updatePointTagError');
         }
         else {
             error.insertAfter(element);
