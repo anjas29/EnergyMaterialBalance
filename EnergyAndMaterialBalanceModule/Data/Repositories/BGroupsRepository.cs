@@ -26,7 +26,8 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
 
         public async Task<IEnumerable<Bgroups>> GetChildrenAsync(int groupid)
         {
-            return await Context.Bgroups.Where(t => t.BgroupIdparent.HasValue && t.BgroupIdparent.Value == groupid).Include(t => t.InverseBgroupIdparentNavigation).ToArrayAsync();
+            return await Context.Bgroups.Where(t => t.BgroupIdparent.HasValue && t.BgroupIdparent.Value == groupid).Include(t => t.Points)
+                .ThenInclude(t => t.Rules).Include(t => t.InverseBgroupIdparentNavigation).ToArrayAsync();
         }
 
         public async Task<Bgroups> GetAllChildren(int groupid)
@@ -55,11 +56,22 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
             {
                 foreach (var g in group.InverseBgroupIdparentNavigation)
                 {
-                    var children = await GetChildrenAsync(g.BgroupId);
-                    g.InverseBgroupIdparentNavigation = children.ToList();
-                    Context.Bgroups.Remove(g);
-                    Context.Bgroups.RemoveRange(g.InverseBgroupIdparentNavigation);
-                    await DeleteChildren(g);
+                    var g1 = await GetById(g.BgroupId);
+
+                    foreach (var p in g1.Points)
+                    {
+                        foreach (var pr in p.Rules)
+                        {
+                            var prules = Context.Prule.Where(t => t.RuleId == pr.RuleId).ToList();
+                            Context.Prule.RemoveRange(prules);
+                        }
+                        Context.Rules.RemoveRange(p.Rules);
+                    }
+
+                    Context.Points.RemoveRange(g1.Points);
+
+                    Context.Bgroups.Remove(g1);
+                    await DeleteChildren(g1);
                 }
             }
         }
