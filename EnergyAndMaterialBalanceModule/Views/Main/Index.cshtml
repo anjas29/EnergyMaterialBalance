@@ -2,94 +2,89 @@
     ViewData["Title"] = "Main Page";
 }
 
+<div class="alert" id="message" role="alert">
+
+</div>
+
 <div class="main-module">
     <div class="row">
-        <div class="col-4">
-            <div class="border bgroups">
+        <div class="col-lg-4 col-md-4 col-sm-6">
+            <div class="border light-bground">
                 <p class="mt-2 ml-3 mb-2 section-name">Groups</p>
             </div>
             <div class="row">
-                <div class="col-2 pr-none">
+                <div class="col-lg-2 col-md-3 col-sm-3 pr-none">
                     <div class="border mt-2 text-center vertical-crd h-100">
-                        <button type="button" class="btn">
-                            <i class="far fa-edit menu"></i><br>Edit
-                        </button>
-                        <button type="button" class="btn">
-                            <i class="far fa-plus-square menu"></i><br>Add
-                        </button>
-                        <button type="button" class="btn">
-                            <i class="far fa-trash-alt menu"></i><br>Delete
-                        </button>
+                        @{
+                            await Html.RenderPartialAsync("_CreateBGroupPartial");
+                        }
+
+                        @{
+                            await Html.RenderPartialAsync("_UpdateBGroupPartial");
+                        }
+
+                        @{
+                            await Html.RenderPartialAsync("_DeleteBGroupPartial");
+                        }
                     </div>
                 </div>
-                <div class="col-10 pl-none">
-                    <div class="bgroups mt-2 h-100">
+                <div class="col-lg-10 col-md-9 col-sm-9 pl-none">
+                    <div class="light-bground mt-2 h-100">
                         @{
                             await Html.RenderPartialAsync("_ResourcesPartial");
                         }
 
                         @{
-                            await Html.RenderPartialAsync("_TreeView");
+                            await Html.RenderPartialAsync("_TreeViewPartial");
                         }
 
                         @{
-                            await Html.RenderPartialAsync("_ValidDisbalance");
+                            await Html.RenderPartialAsync("_ValidDisbalancePartial");
                         }
-
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-8">
-            <div class="border bgroups">
+        <div class="col-lg-8 col-md-8 col-sm-6">
+            <div class="border light-bground">
                 <p class="mt-2 ml-3 mb-2 section-name">Accounting points</p>
             </div>
             <div class="row">
-                <div class="col-11 pr-none">
-                    <div class="bgroups mt-2 h-100">
-                        <table class="table table-bordered">
-                            <thead class="thead">
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Point</th>
-                                    <th scope="col">Direction</th>
-                                    <th scope="col">Tag</th>
-                                    <th scope="col">Period</th>
-                                    <th scope="col">Valid D</th>
-                                    <th scope="col">Source</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>jhgh</td>
-                                    <td>~</td>
-                                    <td>tg1</td>
-                                    <td>1h</td>
-                                    <td>0.01</td>
-                                    <td>frfrgrg</td>
-                                </tr>
-                                
-                            </tbody>
-                        </table>
-                        </div>
-                    </div>
-                    <div class="col-1 pl-none">
-                        <div class="border mt-2 text-center vertical-crd h-100">
-                            <button type="button" class="btn">
-                                <i class="far fa-edit menu"></i><br>Edit
-                            </button>
-                            <button type="button" class="btn">
-                                <i class="far fa-plus-square menu"></i><br>Add
-                            </button>
-                            <button type="button" class="btn">
-                                <i class="far fa-trash-alt menu"></i><br>Delete
-                            </button>
-                        </div>
+                <div class="col-lg-11 col-md-10 col-sm-9 pr-none">
+                    <div class="light-bground text-center mt-2 h-100">
+                        @{
+                            await Html.RenderPartialAsync("_TableViewPartial");
+                        }
                     </div>
                 </div>
+                <div class="col-lg-1 col-md-2 col-sm-3 pl-none">
+                    <div class="border mt-2 text-center vertical-crd">
+                        @{
+                            await Html.RenderPartialAsync("_CreatePointPartial");
+                        }
+
+                        @{
+                            await Html.RenderPartialAsync("_UpdatePointPartial");
+                        }
+
+                        @{
+                            await Html.RenderPartialAsync("_DeletePointPartial");
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mt-3">
+                    <div class="border light-bground h-100">
+                        <p class="mt-2 ml-3 mb-2 section-name">Graph</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

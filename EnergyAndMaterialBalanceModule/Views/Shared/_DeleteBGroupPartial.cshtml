@@ -1,0 +1,33 @@
+﻿<button type="button" id="btnDeleteBGroupModal" class="btn vertical-crd-button" data-toggle="modal" data-target="#deleteBGroupModal" disabled>
+    <i class="fas fa-trash-alt"></i>
+</button>
+
+
+<!-- Modal Window-->
+<div class="modal fade" id="deleteBGroupModal" tabindex="-1" role="dialog" aria-labelledby="deleteBGroup" aria-hidden="true">
+    <form id="deleteBGroupForm">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBGroup">Delete BGroup</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" id="deleteBGroupMessage" role="alert">
+
+                    </div>
+                    <p>Do you really want to delete <b id="deleteBGroupName"></b></p>
+                    <span id="deleteBGroupChildren"> This BGroup has children, they will be deleted also </span>
+                </div>
+                <div class="modal-footer text-center">
+                    <input name="deletedBGroup" id="deleteBGroupId" type="hidden">
+                    <button type="button" class="btn modal-button-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="deleteBGroupSubmit" type="submit" class="btn modal-button-primary">Delete</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+

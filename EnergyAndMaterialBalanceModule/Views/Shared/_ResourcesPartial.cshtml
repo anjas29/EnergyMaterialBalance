@@ -1,13 +1,12 @@
 ﻿@{
     IEnumerable<Resources> resources = ViewData["Resources"] as IEnumerable<Resources>;
-    int selectedResource = (int) ViewData["SelectedResource"];
 }
 
 <div class="row">
     <div class="col-12">
         <div class="mt-3 ml-4 mr-4">
             <label for="resources">Resource:</label>
-            <select class="form-control border-radius-zero" id="resources" asp-for="@selectedResource" asp-items="@(new SelectList(resources,"ResourceId","ResourceName"))">
+            <select class="form-control border-radius-zero" id="resources" asp-items="@(new SelectList(resources,"ResourceId","ResourceName"))">
                 <option selected> </option>
             </select>
         </div>

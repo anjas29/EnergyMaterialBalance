@@ -20,6 +20,11 @@ namespace EnergyAndMaterialBalanceModule.Data.Repositories
 
         }
 
+        public virtual async Task<Resources> GetById(short id)
+        {
+            return await Context.Set<Resources>().FindAsync(id);
+        }
+
 
     }
 }

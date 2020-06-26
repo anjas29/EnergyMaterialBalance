@@ -34,6 +34,9 @@ namespace EnergyAndMaterialBalanceModule.Data
         public virtual DbSet<Sources> Sources { get; set; }
         public virtual DbSet<UserActions> UserActions { get; set; }
         public virtual DbSet<VBgroups> VBgroups { get; set; }
+        public virtual DbSet<SeicVMappingHistorian> SeicVMappingHistorian { get; set; }
+        public virtual DbSet<SeicVMappingIteh> SeicVMappingIteh { get; set; }
+        public virtual DbSet<SeicVMappingManual> SeicVMappingManual { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -410,6 +413,64 @@ namespace EnergyAndMaterialBalanceModule.Data
 
                 entity.Property(e => e.ResourceId).HasColumnName("ResourceID");
             });
+
+            modelBuilder.Entity<SeicVMappingHistorian>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("SEIC_v_MappingHistorian");
+
+                entity.Property(e => e.Description).HasMaxLength(512);
+
+                entity.Property(e => e.TagName)
+                    .IsRequired()
+                    .HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<SeicVMappingIteh>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("SEIC_v_MappingITEH");
+
+                entity.Property(e => e.Dbname)
+                    .IsRequired()
+                    .HasColumnName("DBName")
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Lsname)
+                    .IsRequired()
+                    .HasColumnName("LSName")
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TableName)
+                    .IsRequired()
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TagName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SeicVMappingManual>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("SEIC_v_MappingManual");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TagName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+
 
             OnModelCreatingPartial(modelBuilder);
         }

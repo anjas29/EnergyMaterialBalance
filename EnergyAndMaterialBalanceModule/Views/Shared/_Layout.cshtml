@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,6 +10,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/gijgo/combined/css/gijgo.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/gijgo/combined/js/gijgo.min.js"></script>
 
 
     <link rel="stylesheet" href="~/css/site.css" />
@@ -22,22 +28,11 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a class="nav-link mr-sm-2" href="#"><i class="fa fa-user"></i> Hi, username</a></li>
-                        <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
-                        <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-globe-americas"></i> English </a></li>
-                        <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-globe-europe"></i> Русский</a></li>
+                        <li><a class="nav-link mr-sm-2" href="#"><i class="fa fa-user"></i>@Localizer["HelloUser"]</a></li>
+                        <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-sign-out-alt"></i>@Localizer["Logout"]</a></li>
+                        <li><a class="nav-link mr-sm-2" href="?culture=en-US"><i class="fas fa-globe-americas"></i> English </a></li>
+                        <li><a class="nav-link mr-sm-2" href="?culture=ru-RU"><i class="fas fa-globe-europe"></i> Русский</a></li>
                     </ul>
-
-    <!--
-                        <ul class="nav navbar-nav navbar-left">
-                            <li><a class="nav-link mr-sm-2" href="#"><i class="fa fa-user"></i> Home</a></li>
-                            <li><a class="nav-link mr-sm-2" href="#"><i class="fa fa-user"></i> News</a></li>
-                            <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-sign-out-alt"></i> Log In</a></li>
-                            <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-globe-americas"></i> Log Out</a></li>
-                            <li><a class="nav-link mr-sm-2" href="#"><i class="fas fa-globe-europe"></i> About Us</a></li>
-                        </ul>
-    -->
-
 
                 </div>
             </div>
@@ -54,10 +49,33 @@
             &copy; 2020 - E&MBalance Module
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/gijgo/combined/js/gijgo.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
+    <script src="~/js/bgroups/CreateBgroups.js" asp-append-version="true"></script>
+    <script src="~/js/bgroups/DeleteBgroups.js" asp-append-version="true"></script>
+    <script src="~/js/bgroups/UpdateBgroups.js" asp-append-version="true"></script>
+    <script src="~/js/points/CreatePoints.js" asp-append-version="true"></script>
+    <script src="~/js/points/UpdatePoints.js" asp-append-version="true"></script>
+    <script src="~/js/points/DeletePoints.js" asp-append-version="true"></script>
+
+
+    <script src="~/js/utils/Utils.js" asp-append-version="true"></script>
+    <script src="~/js/utils/Message.js" asp-append-version="true"></script>
+    <script src="~/js/utils/FormatString.js" asp-append-version="true"></script>
+    <script src="~/js/utils/CommonResources.js" asp-append-version="true"></script>
+    <script src="~/js/utils/Table.js" asp-append-version="true"></script>
+
+
+
+    <script src="~/js/DataResponse.js" asp-append-version="true"></script>
+    <script src="~/js/Resource.js" asp-append-version="true"></script>
+
+    <script src="~/js/TableView.js" asp-append-version="true"></script>
+    <script src="~/js/TreeView.js" asp-append-version="true"></script>
+    <script src="~/js/ValidDisbalance.js" asp-append-version="true"></script>
+    <script src="~/js/Validator.js" asp-append-version="true"></script>
+    <script src="~/js/AjaxSetup.js" asp-append-version="true"></script>
+
+    <script src="~/js/main.js" asp-append-version="true"></script>
+
 </body>
 </html>

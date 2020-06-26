@@ -1,0 +1,38 @@
+﻿<button type="button" id="btnUpdateBGroupModal" class="btn vertical-crd-button" data-toggle="modal" data-target="#updateBGroupModal" disabled="true">
+    <i class="fas fa-pencil-alt"></i>
+</button>
+
+
+<!-- Modal Window-->
+<div class="modal fade" id="updateBGroupModal" tabindex="-1" role="dialog" aria-labelledby="updateBGroup" aria-hidden="true">
+    <form id="updateBGroupForm">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-left">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateBGroup">Update BGroup</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" id="updateBGroupMessage" role="alert">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="updateBGgroupName">BGroup Name</label>
+                        <input type="text" class="form-control border-radius-zero" id="updateBGroupName" placeholder="BGroup Name" name="updateBGroupName" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="evalid_disbalance">Valid Disbalance</label>
+                        <input type="number" class="form-control border-radius-zero" id="updateValidDisbalance" placeholder="Valid Disbalance" name="updateValidDisbalance" value="">
+                    </div>
+                </div>
+                <div class="modal-footer text-center">
+                    <input name="bGroupId" id="updateBGroupId" type="hidden" value="">
+                    <button type="button" class="btn modal-button-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn modal-button-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
