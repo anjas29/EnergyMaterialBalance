@@ -10,7 +10,6 @@
         resourceId: $('#createResourceId'),
         asChild: $('#asChild'),
         sameLevel: $('#sameLevel'),
-        bGroupIdParent: $('input:radio[name="createBGroupIdParent"]:checked')
     },
     init: function () {
         this.addButton.click(function () {
@@ -61,7 +60,7 @@
         bGroupNameVal = this.modal.name.val();
         validDisbalanceVal = this.modal.validDisbalanace.val();
         resourceIdVal = this.modal.resourceId.val();
-        bGroupIdParentVal = this.modal.bGroupIdParent.val();
+        bGroupIdParentVal = $('input:radio[name="createBGroupIdParent"]:checked').val();
 
         $.ajax({
             method: 'POST',
