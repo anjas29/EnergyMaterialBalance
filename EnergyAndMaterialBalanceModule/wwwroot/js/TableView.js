@@ -2,20 +2,18 @@
     ui: $('#tableView'),
     body: $('#tableViewBody'),
     init: function () {
-        this.ui.delegate('tr', 'click', function () {
-            if ($(this).index() > 0) {
-                var selected = $(this).hasClass('highlight');
-                TableView.unselectPoint();
-                if (!selected) {
-                    TableView.getPoint(parseInt($(this).data('rowid')));
-                }
+        this.body.delegate('tr', 'click', function () {
+            var selected = $(this).hasClass('highlight');
+            TableView.unselectPoint();
+            if (!selected) {
+                TableView.getPoint(parseInt($(this).data('rowid')));
             }
         });
     },
     getPoint: async function (pointId) {
         $.ajax({
             method: 'GET',
-            url: 'main/getPoint/' + pointId, 
+            url: 'main/getPoint/' + pointId,
             headers: { 'Accept': 'application/json' }
         }).done(function (result) {
             DataResponse.selectedPoint = result.selectedPoint;

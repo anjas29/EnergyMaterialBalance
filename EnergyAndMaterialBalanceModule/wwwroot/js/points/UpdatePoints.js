@@ -7,6 +7,7 @@
     validator: null,
     table: {
         ui: $('#updatePointTagTable'),
+        body: $('#updatePointTagTableBody'),
         selectButton: $('#selectUpdatePointTag'),
         fill: function (selectedSource, tags) {
             var tdData;
@@ -83,7 +84,7 @@
             }
         });
 
-        this.table.ui.delegate('tr', 'click', function () {
+        this.table.body.delegate('tr', 'click', function () {
 
             var selected = $(this).hasClass('highlight');
             UpdatePoints.table.unselectTag();
@@ -96,7 +97,6 @@
     },
 
     show: function () {
-        console.log(DataResponse.selectedPoint);
         this.modal.name.val(DataResponse.selectedPoint.pointName);
         this.modal.validMistake.val(DataResponse.selectedPoint.validMistake);
 

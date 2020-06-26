@@ -7,6 +7,7 @@
     validator: null,
     table: {
         ui: $('#createPointTagTable'),
+        body: $('#createPointTagTableBody'),
         selectButton: $('#selectCreatePointTag'),
         fill: function (selectedSource, tags) {
             var tdData;
@@ -84,7 +85,7 @@
             }
         });
 
-        this.table.ui.delegate('tr', 'click', function () {
+        this.table.body.delegate('tr', 'click', function () {
 
             var selected = $(this).hasClass('highlight');
             CreatePoints.table.unselectTag();
