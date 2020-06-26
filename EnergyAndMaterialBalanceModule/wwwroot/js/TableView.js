@@ -3,10 +3,12 @@
     body: $('#tableViewBody'),
     init: function () {
         this.ui.delegate('tr', 'click', function () {
-            var selected = $(this).hasClass('highlight');
-            TableView.unselectPoint();
-            if (!selected) {
-                TableView.getPoint(parseInt($(this).data('rowid')));
+            if ($(this).index() > 0) {
+                var selected = $(this).hasClass('highlight');
+                TableView.unselectPoint();
+                if (!selected) {
+                    TableView.getPoint(parseInt($(this).data('rowid')));
+                }
             }
         });
     },
